@@ -25,7 +25,3 @@ export function loadNote(): string | null {
     return null;
   }
 }
-
-export function clearNote() {
-  localStorage.removeItem(STORAGE_KEY);
-}

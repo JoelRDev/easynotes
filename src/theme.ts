@@ -40,11 +40,3 @@ export function setThemePreference(themePreference: ThemePreference) {
   localStorage.setItem(STORAGE_KEY, themePreference);
   syncThemePreference(themePreference);
 }
-
-export function toggleTheme() {
-  const currentPreference = getThemePreference();
-  const currentTheme =
-    currentPreference === "system" ? getSystemTheme() : currentPreference;
-  const next: Theme = currentTheme === "light" ? "dark" : "light";
-  setThemePreference(next);
-}

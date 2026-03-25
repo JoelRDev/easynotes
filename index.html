@@ -4,24 +4,31 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>easynotes</title>
+  
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png" />
+    <link rel="icon" href="/favicon/favicon.ico" />
+    <link rel="manifest" href="/favicon/site.webmanifest" />
+  
     <script>
       (() => {
         const saved = localStorage.getItem("easynotes-theme");
         const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
         const theme = saved === "dark" || saved === "light" ? saved : prefersLight ? "light" : "dark";
-
+  
         if (theme === "light") {
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
     </script>
+  
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
     <div class="app">
@@ -76,7 +83,7 @@
       </div>
 
       <main class="main">
-        <div class="editor-wrapper" id="editorWrapper">
+        <div class="editor-wrapper">
           <div
             class="editor"
             id="editor"
