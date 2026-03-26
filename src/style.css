@@ -90,8 +90,7 @@ body {
   gap: 0.75rem;
 }
 
-.header-action,
-.settings-close {
+.header-action {
   background: none;
   border: none;
   color: var(--sub);
@@ -106,14 +105,12 @@ body {
     background-color var(--transition-speed) ease;
 }
 
-.header-action:hover,
-.settings-close:hover {
+.header-action:hover {
   color: var(--text);
   background-color: var(--bg-secondary);
 }
 
-.header-action:focus-visible,
-.settings-close:focus-visible {
+.header-action:focus-visible {
   outline: 2px solid var(--text);
   outline-offset: 2px;
 }
@@ -135,58 +132,50 @@ body {
   display: block;
 }
 
-/* ── Settings Panel ────────────────────────────────── */
+/* ── Settings Dropdown ─────────────────────────────── */
 
-.settings-overlay {
-  position: fixed;
-  inset: 0;
+.settings-wrapper {
+  position: relative;
+}
+
+.settings-dropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
   z-index: 20;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1.5rem;
-  background-color: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(2px);
-}
-
-.settings-overlay[hidden] {
-  display: none;
-}
-
-.settings-panel {
-  width: min(100%, 360px);
-  padding: 1.5rem;
-  border-radius: 1rem;
-  background-color: var(--bg-secondary);
-  border: 1px solid transparent;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background-color: var(--bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+  transform-origin: top right;
+  opacity: 1;
+  transform: scale(1);
   transition:
+    opacity 0.15s ease,
+    transform 0.15s ease,
     background-color var(--transition-speed) ease,
     border-color var(--transition-speed) ease,
     box-shadow var(--transition-speed) ease;
 }
 
-[data-theme="light"] .settings-panel {
+[data-theme="light"] .settings-dropdown {
   background-color: var(--bg);
 }
 
-.settings-panel:focus {
-  outline: none;
+.settings-dropdown[hidden] {
+  display: none;
 }
 
-.settings-panel-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+.settings-dropdown.is-closing {
+  opacity: 0;
+  transform: scale(0.95);
 }
 
-.settings-title {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: -0.01em;
+.settings-dropdown.is-opening {
+  opacity: 0;
+  transform: scale(0.95);
 }
 
 .settings-group {
@@ -210,7 +199,7 @@ body {
   gap: 0.2rem;
   padding: 0.3rem 0.5rem;
   width: fit-content;
-  background-color: color-mix(in srgb, var(--bg) 60%, transparent);
+  background-color: color-mix(in srgb, var(--bg-secondary) 60%, transparent);
   border: 1px solid transparent;
   border-radius: 999px;
   transition:
@@ -218,8 +207,8 @@ body {
     border-color var(--transition-speed) ease;
 }
 
-[data-theme="light"] .theme-toggle {
-  background-color: var(--bg-secondary);
+:root:not([data-theme="light"]) .theme-toggle {
+  background-color: color-mix(in srgb, var(--bg-secondary) 60%, var(--bg));
 }
 
 .theme-toggle-btn {
@@ -242,7 +231,7 @@ body {
 
 .theme-toggle-btn:hover {
   color: var(--text);
-  background-color: color-mix(in srgb, var(--bg) 50%, transparent);
+  background-color: color-mix(in srgb, var(--text) 10%, transparent);
 }
 
 .theme-toggle-btn.active {
@@ -250,15 +239,15 @@ body {
   background-color: color-mix(in srgb, var(--bg-secondary) 90%, var(--text) 10%);
 }
 
-[data-theme="light"] .theme-toggle-btn.active {
-  background-color: var(--bg);
-}
-
 .theme-toggle-btn.active:hover {
   background-color: color-mix(in srgb, var(--bg-secondary) 80%, var(--text) 20%);
 }
 
-[data-theme="light"] .theme-toggle-btn.active:hover {
+:root:not([data-theme="light"]) .theme-toggle-btn[data-theme-value="dark"].active {
+  background-color: var(--bg);
+}
+
+:root:not([data-theme="light"]) .theme-toggle-btn[data-theme-value="dark"].active:hover {
   background-color: color-mix(in srgb, var(--bg) 90%, var(--text) 10%);
 }
 

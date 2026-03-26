@@ -15,9 +15,7 @@ const toolbar = $<HTMLDivElement>("toolbar");
 const wordCountEl = $<HTMLSpanElement>("wordCount");
 const charCountEl = $<HTMLSpanElement>("charCount");
 const settingsButton = $<HTMLButtonElement>("settingsButton");
-const settingsOverlay = $<HTMLDivElement>("settingsOverlay");
-const settingsPanel = $<HTMLDivElement>("settingsPanel");
-const settingsClose = $<HTMLButtonElement>("settingsClose");
+const settingsDropdown = $<HTMLDivElement>("settingsDropdown");
 const boldButton = $<HTMLButtonElement>("boldButton");
 const italicButton = $<HTMLButtonElement>("italicButton");
 const underlineButton = $<HTMLButtonElement>("underlineButton");
@@ -54,10 +52,20 @@ themeToggleButtons.forEach((btn) => {
   });
 });
 
-settingsButton.addEventListener("click", openSettings);
-settingsClose.addEventListener("click", closeSettings);
-settingsOverlay.addEventListener("click", (event) => {
-  if (event.target === settingsOverlay) {
+settingsButton.addEventListener("click", () => {
+  if (isSettingsOpen()) {
+    closeSettings();
+  } else {
+    openSettings();
+  }
+});
+
+document.addEventListener("click", (event) => {
+  if (
+    isSettingsOpen() &&
+    !settingsDropdown.contains(event.target as Node) &&
+    !settingsButton.contains(event.target as Node)
+  ) {
     closeSettings();
   }
 });
@@ -531,20 +539,30 @@ document.addEventListener("keydown", (e) => {
 // ── Settings ─────────────────────────────────────────
 
 function openSettings() {
-  settingsOverlay.hidden = false;
+  settingsDropdown.classList.add("is-opening");
+  settingsDropdown.hidden = false;
   settingsButton.setAttribute("aria-expanded", "true");
   syncThemePreferenceInputs();
-  settingsPanel.focus();
+  requestAnimationFrame(() => {
+    settingsDropdown.classList.remove("is-opening");
+  });
 }
 
 function closeSettings() {
-  settingsOverlay.hidden = true;
+  settingsDropdown.classList.add("is-closing");
   settingsButton.setAttribute("aria-expanded", "false");
-  editor.focus();
+  settingsDropdown.addEventListener(
+    "transitionend",
+    () => {
+      settingsDropdown.hidden = true;
+      settingsDropdown.classList.remove("is-closing");
+    },
+    { once: true },
+  );
 }
 
 function isSettingsOpen() {
-  return !settingsOverlay.hidden;
+  return !settingsDropdown.hidden;
 }
 
 function syncThemePreferenceInputs() {
@@ -564,7 +582,7 @@ function isInteractiveTarget(target: EventTarget | null) {
     target instanceof HTMLButtonElement ||
     target instanceof HTMLSelectElement ||
     target instanceof HTMLAnchorElement ||
-    target.closest('[role="dialog"]') !== null
+    target.closest('.settings-dropdown') !== null
   );
 }
 
