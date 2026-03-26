@@ -608,6 +608,7 @@ function openSettings() {
   settingsDropdown.classList.add("is-opening");
   settingsDropdown.hidden = false;
   settingsButton.setAttribute("aria-expanded", "true");
+  settingsButton.classList.add("active");
   syncThemePreferenceInputs();
   requestAnimationFrame(() => {
     settingsDropdown.classList.remove("is-opening");
@@ -617,6 +618,7 @@ function openSettings() {
 function closeSettings() {
   settingsDropdown.classList.add("is-closing");
   settingsButton.setAttribute("aria-expanded", "false");
+  settingsButton.classList.remove("active");
   settingsDropdown.addEventListener(
     "transitionend",
     () => {

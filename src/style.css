@@ -107,6 +107,11 @@ body {
 
 .header-action:hover {
   color: var(--text);
+  background-color: color-mix(in srgb, var(--bg-secondary) 50%, transparent);
+}
+
+.header-action.active {
+  color: var(--text);
   background-color: var(--bg-secondary);
 }
 
@@ -384,8 +389,13 @@ body {
   text-underline-offset: 2px;
 }
 
+.toolbar-btn-icon {
+  pointer-events: none;
+}
+
 .toolbar-btn-list {
-  letter-spacing: -0.02em;
+  width: 16px;
+  height: 16px;
 }
 
 .toolbar-btn-history {
