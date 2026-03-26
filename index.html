@@ -66,6 +66,23 @@
       <div class="toolbar" id="toolbar">
         <button
           class="toolbar-btn"
+          id="undoButton"
+          type="button"
+          aria-label="Undo (Ctrl+Z)"
+          title="Undo (Ctrl+Z)"
+          disabled
+        ><span class="toolbar-btn-label toolbar-btn-history">↩</span></button>
+        <button
+          class="toolbar-btn"
+          id="redoButton"
+          type="button"
+          aria-label="Redo (Ctrl+Shift+Z)"
+          title="Redo (Ctrl+Shift+Z)"
+          disabled
+        ><span class="toolbar-btn-label toolbar-btn-history">↪</span></button>
+        <span class="toolbar-separator"></span>
+        <button
+          class="toolbar-btn"
           id="boldButton"
           type="button"
           aria-label="Bold (Ctrl+B)"
@@ -85,6 +102,7 @@
           aria-label="Underline (Ctrl+U)"
           title="Underline (Ctrl+U)"
         ><span class="toolbar-btn-label toolbar-btn-underline">U</span></button>
+        <span class="toolbar-separator"></span>
         <button
           class="toolbar-btn"
           id="listButton"

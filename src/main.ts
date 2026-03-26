@@ -16,14 +16,19 @@ const wordCountEl = $<HTMLSpanElement>("wordCount");
 const charCountEl = $<HTMLSpanElement>("charCount");
 const settingsButton = $<HTMLButtonElement>("settingsButton");
 const settingsDropdown = $<HTMLDivElement>("settingsDropdown");
+const undoButton = $<HTMLButtonElement>("undoButton");
+const redoButton = $<HTMLButtonElement>("redoButton");
 const boldButton = $<HTMLButtonElement>("boldButton");
 const italicButton = $<HTMLButtonElement>("italicButton");
 const underlineButton = $<HTMLButtonElement>("underlineButton");
 const listButton = $<HTMLButtonElement>("listButton");
 type FormatCommand = "bold" | "italic" | "underline" | "insertUnorderedList";
+type HistoryCommand = "undo" | "redo";
 type FormatState = Record<FormatCommand, boolean>;
 
+const historyButtons = [undoButton, redoButton];
 const formatButtons = [boldButton, italicButton, underlineButton, listButton];
+const toolbarButtons = [...historyButtons, ...formatButtons];
 const formatButtonsByCommand: Record<FormatCommand, HTMLButtonElement> = {
   bold: boldButton,
   italic: italicButton,
@@ -80,6 +85,7 @@ syncOrderedListMarkerWidths();
 syncEditorPlaceholderState();
 updateStats();
 syncToolbarScrollState();
+syncToolbarState();
 
 // ── Debounced auto-save ──────────────────────────────
 
@@ -107,7 +113,10 @@ editor.addEventListener("input", (event) => {
 
   handleEditorContentChange();
 });
-editor.addEventListener("focus", syncEditorPlaceholderState);
+editor.addEventListener("focus", () => {
+  syncEditorPlaceholderState();
+  syncToolbarState();
+});
 editor.addEventListener("blur", syncEditorPlaceholderState);
 
 editor.addEventListener("beforeinput", (event) => {
@@ -171,6 +180,16 @@ function syncToolbarButtons() {
   }
 }
 
+function syncHistoryButtons() {
+  undoButton.disabled = !canExecCommand("undo");
+  redoButton.disabled = !canExecCommand("redo");
+}
+
+function syncToolbarState() {
+  syncToolbarButtons();
+  syncHistoryButtons();
+}
+
 function getEditorSelection() {
   const selection = document.getSelection();
   if (!selection || selection.rangeCount === 0) return null;
@@ -202,6 +221,14 @@ function applyToolbarState(formatState: FormatState) {
   listButton.classList.toggle("active", formatState.insertUnorderedList);
 }
 
+function canExecCommand(command: HistoryCommand) {
+  try {
+    return document.queryCommandEnabled(command);
+  } catch {
+    return false;
+  }
+}
+
 function rememberCurrentFormatState() {
   Object.assign(rememberedCollapsedFormatState, getCurrentFormatState());
 }
@@ -215,7 +242,18 @@ function handleEditorContentChange() {
   syncEditorPlaceholderState();
   debouncedSave();
   updateStats();
-  syncToolbarButtons();
+  syncToolbarState();
+}
+
+function execHistory(command: HistoryCommand) {
+  editor.focus();
+  if (!canExecCommand(command)) {
+    syncHistoryButtons();
+    return;
+  }
+
+  document.execCommand(command, false);
+  requestAnimationFrame(handleEditorContentChange);
 }
 
 function syncEditorPlaceholderState() {
@@ -447,11 +485,21 @@ function syncEmptyEditorTypingFormat(event: InputEvent) {
   return true;
 }
 
-formatButtons.forEach((button) => {
+toolbarButtons.forEach((button) => {
   button.addEventListener("mousedown", (event) => {
     // Keep the caret/selection in the editor so command state stays in sync.
     event.preventDefault();
   });
+});
+
+undoButton.addEventListener("click", (e) => {
+  e.preventDefault();
+  execHistory("undo");
+});
+
+redoButton.addEventListener("click", (e) => {
+  e.preventDefault();
+  execHistory("redo");
 });
 
 boldButton.addEventListener("click", (e) => {
@@ -474,11 +522,11 @@ listButton.addEventListener("click", (e) => {
   execFormat("insertUnorderedList");
 });
 
-editor.addEventListener("keyup", syncToolbarButtons);
-editor.addEventListener("mouseup", syncToolbarButtons);
+editor.addEventListener("keyup", syncToolbarState);
+editor.addEventListener("mouseup", syncToolbarState);
 document.addEventListener("selectionchange", () => {
   if (document.activeElement === editor || editor.contains(document.activeElement)) {
-    syncToolbarButtons();
+    syncToolbarState();
   }
 });
 
@@ -502,6 +550,24 @@ function syncToolbarScrollState() {
 // ── Keyboard shortcuts ───────────────────────────────
 
 document.addEventListener("keydown", (e) => {
+  if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key.toLowerCase() === "z") {
+    e.preventDefault();
+    execHistory("undo");
+    return;
+  }
+
+  if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === "z") {
+    e.preventDefault();
+    execHistory("redo");
+    return;
+  }
+
+  if (e.ctrlKey && !e.metaKey && e.key.toLowerCase() === "y") {
+    e.preventDefault();
+    execHistory("redo");
+    return;
+  }
+
   if ((e.ctrlKey || e.metaKey) && e.key === "b") {
     e.preventDefault();
     execFormat("bold");
