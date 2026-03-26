@@ -38,15 +38,20 @@ const rememberedCollapsedFormatState: FormatState = {
   underline: false,
   insertUnorderedList: false,
 };
-const themeSelect = $<HTMLSelectElement>("themeSelect");
+const themeToggle = $<HTMLDivElement>("themeToggle");
+const themeToggleButtons = themeToggle.querySelectorAll<HTMLButtonElement>(".theme-toggle-btn");
 
 // ── Theme ────────────────────────────────────────────
 
 initTheme();
 syncThemePreferenceInputs();
 
-themeSelect.addEventListener("change", () => {
-  setThemePreference(themeSelect.value as ThemePreference);
+themeToggleButtons.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const value = btn.dataset.themeValue as ThemePreference;
+    setThemePreference(value);
+    syncThemePreferenceInputs();
+  });
 });
 
 settingsButton.addEventListener("click", openSettings);
@@ -543,7 +548,12 @@ function isSettingsOpen() {
 }
 
 function syncThemePreferenceInputs() {
-  themeSelect.value = getThemePreference();
+  const current = getThemePreference();
+  themeToggleButtons.forEach((btn) => {
+    const isActive = btn.dataset.themeValue === current;
+    btn.classList.toggle("active", isActive);
+    btn.setAttribute("aria-checked", String(isActive));
+  });
 }
 
 function isInteractiveTarget(target: EventTarget | null) {

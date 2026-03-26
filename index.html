@@ -134,12 +134,12 @@
         </div>
 
         <div class="settings-group">
-          <label class="settings-label" for="themeSelect">Theme</label>
-          <select class="theme-select" id="themeSelect">
-            <option value="dark">Dark</option>
-            <option value="light">Light</option>
-            <option value="system">System</option>
-          </select>
+          <span class="settings-label">Theme</span>
+          <div class="theme-toggle" id="themeToggle" role="radiogroup" aria-label="Theme">
+            <button class="theme-toggle-btn" data-theme-value="dark" type="button" role="radio" aria-checked="false">Dark</button>
+            <button class="theme-toggle-btn" data-theme-value="light" type="button" role="radio" aria-checked="false">Light</button>
+            <button class="theme-toggle-btn" data-theme-value="system" type="button" role="radio" aria-checked="false">System</button>
+          </div>
         </div>
       </div>
     </div>
