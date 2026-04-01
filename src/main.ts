@@ -22,6 +22,7 @@ const boldButton = $<HTMLButtonElement>("boldButton");
 const italicButton = $<HTMLButtonElement>("italicButton");
 const underlineButton = $<HTMLButtonElement>("underlineButton");
 const listButton = $<HTMLButtonElement>("listButton");
+const clearButton = $<HTMLButtonElement>("clearButton");
 type FormatCommand = "bold" | "italic" | "underline" | "insertUnorderedList";
 type HistoryCommand = "undo" | "redo";
 type FormatState = Record<FormatCommand, boolean>;
@@ -520,6 +521,19 @@ underlineButton.addEventListener("click", (e) => {
 listButton.addEventListener("click", (e) => {
   e.preventDefault();
   execFormat("insertUnorderedList");
+});
+
+clearButton.addEventListener("mousedown", (e) => e.preventDefault());
+clearButton.addEventListener("click", (e) => {
+  e.preventDefault();
+  editor.innerHTML = "";
+  Object.assign(rememberedCollapsedFormatState, {
+    bold: false,
+    italic: false,
+    underline: false,
+    insertUnorderedList: false,
+  });
+  handleEditorContentChange();
 });
 
 editor.addEventListener("keyup", syncToolbarState);

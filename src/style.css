@@ -390,16 +390,18 @@ body {
 }
 
 .toolbar-btn-icon {
-  pointer-events: none;
-}
-
-.toolbar-btn-list {
+  display: block;
   width: 16px;
   height: 16px;
+  pointer-events: none;
 }
 
 .toolbar-btn-history {
   font-size: 1.1rem;
+}
+
+.toolbar-btn-clear {
+  transform: translateY(-1px);
 }
 
 .toolbar-separator {
@@ -414,7 +416,7 @@ body {
 :root:not([data-theme="light"]) .toolbar-btn-bold,
 :root:not([data-theme="light"]) .toolbar-btn-italic,
 :root:not([data-theme="light"]) .toolbar-btn-underline,
-:root:not([data-theme="light"]) .toolbar-btn-list,
+:root:not([data-theme="light"]) .toolbar-btn-icon,
 :root:not([data-theme="light"]) .toolbar-btn-history {
   color: #9e9fa2;
 }
