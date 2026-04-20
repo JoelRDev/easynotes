@@ -132,6 +132,74 @@ editor.addEventListener("beforeinput", (event) => {
   rememberCurrentFormatState();
 });
 
+editor.addEventListener("paste", (event) => {
+  event.preventDefault();
+  const text = event.clipboardData?.getData("text/plain") ?? "";
+  if (text === "") return;
+
+  insertPlainTextAtSelection(text);
+  handleEditorContentChange();
+});
+
+editor.addEventListener("drop", (event) => {
+  const text = event.dataTransfer?.getData("text/plain") ?? "";
+  if (text === "") return;
+
+  event.preventDefault();
+  const range = caretRangeFromPoint(event.clientX, event.clientY);
+  if (range) {
+    const selection = document.getSelection();
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+  }
+  editor.focus();
+  insertPlainTextAtSelection(text);
+  handleEditorContentChange();
+});
+
+function insertPlainTextAtSelection(text: string) {
+  if (document.execCommand("insertText", false, text)) {
+    return;
+  }
+
+  const selection = document.getSelection();
+  if (!selection || selection.rangeCount === 0) {
+    editor.append(document.createTextNode(text));
+    return;
+  }
+
+  const range = selection.getRangeAt(0);
+  range.deleteContents();
+  const textNode = document.createTextNode(text);
+  range.insertNode(textNode);
+  range.setStartAfter(textNode);
+  range.setEndAfter(textNode);
+  selection.removeAllRanges();
+  selection.addRange(range);
+}
+
+function caretRangeFromPoint(x: number, y: number): Range | null {
+  const doc = document as Document & {
+    caretPositionFromPoint?: (x: number, y: number) => { offsetNode: Node; offset: number } | null;
+    caretRangeFromPoint?: (x: number, y: number) => Range | null;
+  };
+
+  if (typeof doc.caretRangeFromPoint === "function") {
+    return doc.caretRangeFromPoint(x, y);
+  }
+
+  if (typeof doc.caretPositionFromPoint === "function") {
+    const position = doc.caretPositionFromPoint(x, y);
+    if (!position) return null;
+    const range = document.createRange();
+    range.setStart(position.offsetNode, position.offset);
+    range.collapse(true);
+    return range;
+  }
+
+  return null;
+}
+
 window.addEventListener("beforeunload", persistEditorContent);
 window.addEventListener("pagehide", persistEditorContent);
 window.addEventListener("scroll", syncToolbarScrollState, { passive: true });
