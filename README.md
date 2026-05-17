@@ -4,6 +4,8 @@
 
 EasyNotes is a lightweight browser note editor built for fast, temporary writing. It modernizes the quick-notes flow of notes.io with a calmer interface, browser-based auto-save, rich text controls, live writing stats, and theme preferences.
 
+Try it at [easynotes.io](https://easynotes.io).
+
 The project is intentionally small: open the page, write what you need, and let the browser keep the draft available until you clear it or move it somewhere more permanent.
 
 ## Highlights
